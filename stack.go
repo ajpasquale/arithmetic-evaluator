@@ -13,27 +13,27 @@ func newStack(size int) *stack {
 }
 
 func (s *stack) Push(item int) error {
-	if !s.isFull() {
-		s.items = append(s.items, item)
-		return nil
+	if s.isFull() {
+		return errors.New("stack is full")
 	}
-	return errors.New("stack is full")
+	s.items = append(s.items, item)
+	return nil
 }
 
 func (s *stack) Pop() (int, error) {
-	if !s.isEmpty() {
-		item := s.items[len(s.items)-1]
-		s.items = s.items[:len(s.items)-1]
-		return item, nil
+	if s.isEmpty() {
+		return 0, errors.New("stack is empty")
 	}
-	return 0, errors.New("stack is empty")
+	item := s.items[len(s.items)-1]
+	s.items = s.items[:len(s.items)-1]
+	return item, nil
 }
 
 func (s *stack) Peek() (int, error) {
-	if !s.isEmpty() {
-		return s.items[len(s.items)-1], nil
+	if s.isEmpty() {
+		return 0, errors.New("stack is empty")
 	}
-	return 0, errors.New("stack is empty")
+	return s.items[len(s.items)-1], nil
 }
 
 func (s *stack) Size() int {

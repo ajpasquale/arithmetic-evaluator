@@ -52,12 +52,12 @@ func (q *pf_queue) Enqueue(s string) error {
 }
 
 func (q *pf_queue) Dequeue() (Token, error) {
-	if !q.isEmpty() {
-		t := q.tokens[0]
-		q.tokens = q.tokens[1:]
-		return t, nil
+	if q.isEmpty() {
+		return Token{}, errors.New("the queue is empty")
 	}
-	return Token{}, errors.New("the queue is empty")
+	t := q.tokens[0]
+	q.tokens = q.tokens[1:]
+	return t, nil
 }
 
 func isNumeric(s string) bool {
