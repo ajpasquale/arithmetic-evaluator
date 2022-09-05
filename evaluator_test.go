@@ -1,7 +1,6 @@
 package evaluator
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -17,7 +16,7 @@ func TestEvaluatorEvaluate(t *testing.T) {
 	q.Enqueue("1")
 	q.Enqueue("-")
 
-	v, _ := evaluate(q)
-	fmt.Print(v)
-
+	if v, _ := evaluate(q); v.val != "25" {
+		t.Fatal("evaluate should return 25")
+	}
 }

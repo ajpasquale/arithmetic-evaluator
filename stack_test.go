@@ -1,6 +1,7 @@
 package evaluator
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -14,7 +15,7 @@ func TestEntireStack(t *testing.T) {
 
 	// testing the push
 	for i := 1; i < 6; i++ {
-		if err := s.Push(i); err != nil {
+		if err := s.Push(*TokenizeInt(i)); err != nil {
 			t.Fatal("stack should not be full")
 		}
 	}
@@ -24,18 +25,18 @@ func TestEntireStack(t *testing.T) {
 		t.Fatal("stack should be size of five")
 	}
 
-	if err := s.Push(6); err == nil {
+	if err := s.Push(*TokenizeInt(6)); err == nil {
 		t.Fatal("stack should be full")
 	}
 
 	// testing the peek
-	if item, _ := s.Peek(); item != 5 {
+	if tk, _ := s.Peek(); tk.val != "5" {
 		t.Fatal("top element should be five")
 	}
 
 	// testing the pop
 	for i := 5; i > 0; i-- {
-		if item, _ := s.Pop(); item != i {
+		if tk, _ := s.Pop(); tk.val != strconv.Itoa(i) {
 			t.Fatal("element should be ", i)
 		}
 	}

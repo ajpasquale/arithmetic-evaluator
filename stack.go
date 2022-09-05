@@ -3,47 +3,47 @@ package evaluator
 import "errors"
 
 type stack struct {
-	items []int
+	tokens []Token
 }
 
 func newStack(size int) *stack {
 	return &stack{
-		items: make([]int, 0, size),
+		tokens: make([]Token, 0, size),
 	}
 }
 
-func (s *stack) Push(item int) error {
+func (s *stack) Push(t Token) error {
 	if s.isFull() {
 		return errors.New("stack is full")
 	}
-	s.items = append(s.items, item)
+	s.tokens = append(s.tokens, t)
 	return nil
 }
 
-func (s *stack) Pop() (int, error) {
+func (s *stack) Pop() (Token, error) {
 	if s.isEmpty() {
-		return 0, errors.New("stack is empty")
+		return Token{}, errors.New("stack is empty")
 	}
-	item := s.items[len(s.items)-1]
-	s.items = s.items[:len(s.items)-1]
-	return item, nil
+	token := s.tokens[len(s.tokens)-1]
+	s.tokens = s.tokens[:len(s.tokens)-1]
+	return token, nil
 }
 
-func (s *stack) Peek() (int, error) {
+func (s *stack) Peek() (Token, error) {
 	if s.isEmpty() {
-		return 0, errors.New("stack is empty")
+		return Token{}, errors.New("stack is empty")
 	}
-	return s.items[len(s.items)-1], nil
+	return s.tokens[len(s.tokens)-1], nil
 }
 
 func (s *stack) Size() int {
-	return len(s.items)
+	return len(s.tokens)
 }
 
 func (s *stack) isFull() bool {
-	return len(s.items) == cap(s.items)
+	return len(s.tokens) == cap(s.tokens)
 }
 
 func (s *stack) isEmpty() bool {
-	return len(s.items) == 0
+	return len(s.tokens) == 0
 }

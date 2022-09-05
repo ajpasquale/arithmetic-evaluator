@@ -2,7 +2,6 @@ package evaluator
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // evaluate "54*32*+1-"
@@ -18,7 +17,7 @@ e.g. 1st operator 2nd
 Push -> result
 */
 
-func evaluate(q *pf_queue) (int, error) {
+func evaluate(q *queue) (Token, error) {
 	s := newStack(10)
 
 	for !q.isEmpty() {
@@ -28,13 +27,12 @@ func evaluate(q *pf_queue) (int, error) {
 		}
 		switch token.typ {
 		case tokenNumeric:
-			v, _ := strconv.Atoi(token.val)
-			s.Push(v)
+			s.Push(token)
 		case tokenOperatorAdd:
 			second, _ := s.Pop()
 			first, _ := s.Pop()
 
-			eval := first + second
+			eval, _ := AddTwoTokens(first, second)
 
 			s.Push(eval)
 
@@ -42,21 +40,21 @@ func evaluate(q *pf_queue) (int, error) {
 			second, _ := s.Pop()
 			first, _ := s.Pop()
 
-			eval := first - second
+			eval, _ := SubTwoTokens(first, second)
 
 			s.Push(eval)
 		case tokenOperatorMulti:
 			second, _ := s.Pop()
 			first, _ := s.Pop()
 
-			eval := first * second
+			eval, _ := MultipleTwoTokens(first, second)
 
 			s.Push(eval)
 		case tokenOperatorDiv:
 			second, _ := s.Pop()
 			first, _ := s.Pop()
 
-			eval := first / second
+			eval, _ := DividTwoTokens(first, second)
 
 			s.Push(eval)
 		}
