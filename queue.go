@@ -35,3 +35,13 @@ func (q *queue) Dequeue() (Token, error) {
 func (q *queue) isEmpty() bool {
 	return len(q.tokens) == 0
 }
+
+func (q queue) String() string {
+	tq := q
+	expr := ""
+	for !tq.isEmpty() {
+		t, _ := tq.Dequeue()
+		expr += t.val
+	}
+	return expr
+}

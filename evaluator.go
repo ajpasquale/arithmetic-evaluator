@@ -4,19 +4,6 @@ import (
 	"fmt"
 )
 
-// evaluate "54*32*+1-"
-// return "25"
-
-// rules
-/*
-Numbers -> Push
-Operators -> Pop (+, -, *, /)
-Pop -> 2nd
-Pop -> 1st
-e.g. 1st operator 2nd
-Push -> result
-*/
-
 func evaluate(q *queue) (Token, error) {
 	s := newStack(10)
 

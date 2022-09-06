@@ -1,6 +1,9 @@
 package evaluator
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestNewQueue(t *testing.T) {
 	q := newQueue()
@@ -48,7 +51,7 @@ func TestQueueDequeue(t *testing.T) {
 	q.Enqueue("+")
 	q.Enqueue("1")
 	q.Enqueue("-")
-
+	fmt.Println(q.String())
 	if tk, _ := q.Dequeue(); tk.val != "5" || tk.typ != tokenNumeric {
 		t.Fatal("dequeue should return 5 and a token of tokenNumeric")
 	}

@@ -8,12 +8,14 @@ import (
 type tokenType int
 
 const (
-	tokenNumeric tokenType = iota
-	tokenOperatorAdd
-	tokenOperatorSub
+	tokenError tokenType = iota
+	tokenOperatorParens
+	tokenOperatorExpo
 	tokenOperatorMulti
 	tokenOperatorDiv
-	tokenError
+	tokenOperatorAdd
+	tokenOperatorSub
+	tokenNumeric
 )
 
 type Token struct {
