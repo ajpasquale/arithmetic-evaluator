@@ -18,31 +18,22 @@ func evaluate(q *queue) (Token, error) {
 		case tokenOperatorAdd:
 			second, _ := s.Pop()
 			first, _ := s.Pop()
-
 			eval, _ := AddTwoTokens(first, second)
-
 			s.Push(eval)
-
 		case tokenOperatorSub:
 			second, _ := s.Pop()
 			first, _ := s.Pop()
-
 			eval, _ := SubTwoTokens(first, second)
-
 			s.Push(eval)
 		case tokenOperatorMulti:
 			second, _ := s.Pop()
 			first, _ := s.Pop()
-
-			eval, _ := MultipleTwoTokens(first, second)
-
+			eval, _ := MultiplyTwoTokens(first, second)
 			s.Push(eval)
 		case tokenOperatorDiv:
 			second, _ := s.Pop()
 			first, _ := s.Pop()
-
 			eval, _ := DividTwoTokens(first, second)
-
 			s.Push(eval)
 		}
 	}

@@ -58,6 +58,7 @@ func AddTwoTokens(f Token, s Token) (Token, error) {
 	}
 	return Token{}, errors.New("cannot add non-numeric tokens")
 }
+
 func SubTwoTokens(f Token, s Token) (Token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
@@ -69,7 +70,8 @@ func SubTwoTokens(f Token, s Token) (Token, error) {
 	}
 	return Token{}, errors.New("cannot subtract non-numeric tokens")
 }
-func MultipleTwoTokens(f Token, s Token) (Token, error) {
+
+func MultiplyTwoTokens(f Token, s Token) (Token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
 		si, _ := strconv.Atoi(s.val)
@@ -80,6 +82,7 @@ func MultipleTwoTokens(f Token, s Token) (Token, error) {
 	}
 	return Token{}, errors.New("cannot multiple non-numeric tokens")
 }
+
 func DividTwoTokens(f Token, s Token) (Token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
@@ -91,6 +94,7 @@ func DividTwoTokens(f Token, s Token) (Token, error) {
 	}
 	return Token{}, errors.New("cannot divid non-numeric tokens")
 }
+
 func isNumeric(s string) bool {
 	_, err := strconv.Atoi(s)
 	return err == nil

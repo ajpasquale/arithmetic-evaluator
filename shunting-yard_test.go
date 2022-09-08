@@ -14,10 +14,11 @@ func TestParse(t *testing.T) {
 	q.Enqueue("1")
 	q.Enqueue("-")
 	q.Enqueue("9")
-	expr := q.String()
-	if expr != "5+3*1-9" {
+
+	if q.String() != "5+3*1-9" {
 		t.Fatal("String method did not return the correct value")
 	}
+
 	o, _ := Parse(*q)
 	if o.String() != "531*+9-" {
 		t.Fatal("String method did not return the correct value")
