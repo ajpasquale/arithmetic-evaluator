@@ -43,6 +43,5 @@ func parse(input queue) (queue, error) {
 		lastToken, _ := opStack.pop()
 		output.enqueue(lastToken.val)
 	}
-
 	return *output, nil
 }
