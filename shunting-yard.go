@@ -4,44 +4,46 @@ import (
 	"errors"
 )
 
-func Parse(input queue) (queue, error) {
+// converts an infix input queue into a postfix output queue
+func parse(input queue) (queue, error) {
 	l := len(input.tokens)
 	opStack := newStack(l)
 	output := newQueue()
 
 	for !input.isEmpty() {
-		token, err := input.Dequeue()
+		token, err := input.dequeue()
 		if err != nil {
 			return input, err
 		}
 		switch token.typ {
 		case tokenNumeric:
-			output.Enqueue(token.val)
+			output.enqueue(token.val)
 		case tokenOperatorAdd:
 			fallthrough
 		case tokenOperatorSub:
-			if !opStack.isEmpty() {
-				if t, _ := opStack.Peek(); t.typ < tokenOperatorAdd {
-					for !opStack.isEmpty() {
-						tk, _ := opStack.Pop()
-						output.Enqueue(tk.val)
-					}
-					opStack.Push(token)
-				}
-			} else {
-				opStack.Push(token)
-			}
+			fallthrough
 		case tokenOperatorMulti:
 			fallthrough
 		case tokenOperatorDiv:
-			opStack.Push(token)
+			if !opStack.isEmpty() {
+				top, _ := opStack.peek()
+				for precedence(top.typ) >= precedence(token.typ) {
+					output.enqueue(top.val)
+					opStack.pop()
+					top, _ = opStack.peek()
+				}
+				opStack.push(token)
+			} else {
+				opStack.push(token)
+			}
 		case tokenError:
 			return *output, errors.New("encountered an error token")
 		}
 	}
-
-	lastToken, _ := opStack.Pop()
-	output.Enqueue(lastToken.val)
+	for !opStack.isEmpty() {
+		lastToken, _ := opStack.pop()
+		output.enqueue(lastToken.val)
+	}
 
 	return *output, nil
 }

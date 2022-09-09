@@ -3,6 +3,7 @@ package evaluator
 import (
 	"errors"
 	"strconv"
+	"strings"
 )
 
 type tokenType int
@@ -18,84 +19,127 @@ const (
 	tokenNumeric
 )
 
-type Token struct {
+type token struct {
 	typ tokenType
 	val string
 }
 
-func TokenizeInt(i int) *Token {
+func tokenizeInt(i int) *token {
 	s := strconv.Itoa(i)
-	return &Token{
+	return &token{
 		tokenNumeric,
 		s,
 	}
 }
 
-func TokenizeString(s string) (Token, error) {
-	switch {
-	case isNumeric(s):
-		return Token{tokenNumeric, s}, nil
-	case s == "+":
-		return Token{tokenOperatorAdd, s}, nil
-	case s == "-":
-		return Token{tokenOperatorSub, s}, nil
-	case s == "*":
-		return Token{tokenOperatorMulti, s}, nil
-	case s == "/":
-		return Token{tokenOperatorDiv, s}, nil
+// turns an infix expression like "5+3*1-9" into a queue of tokens
+func tokenizeInfix(s string) (queue, error) {
+	q := newQueue()
+
+	var substrs []string
+	for {
+		i := strings.IndexFunc(s, func(r rune) bool {
+			return r == '+' || r == '-' || r == '*' || r == '/'
+		})
+		if i == -1 {
+			if len(s) > 0 {
+				substrs = append(substrs, s)
+			}
+			break
+		}
+		substrs = append(substrs, strings.TrimSpace(s[:i]), s[i:i+1])
+		s = strings.TrimSpace(s[i+1:])
 	}
-	return Token{tokenError, ""}, errors.New("unknown token")
+
+	for _, v := range substrs {
+		q.enqueue(v)
+	}
+	return *q, nil
 }
 
-func AddTwoTokens(f Token, s Token) (Token, error) {
+func tokenizeString(s string) (token, error) {
+	switch {
+	case isNumeric(s):
+		return token{tokenNumeric, s}, nil
+	case s == "+":
+		return token{tokenOperatorAdd, s}, nil
+	case s == "-":
+		return token{tokenOperatorSub, s}, nil
+	case s == "*":
+		return token{tokenOperatorMulti, s}, nil
+	case s == "/":
+		return token{tokenOperatorDiv, s}, nil
+	}
+	return token{tokenError, ""}, errors.New("unknown token")
+}
+
+func addTwoTokens(f token, s token) (token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
 		si, _ := strconv.Atoi(s.val)
 
 		ni := fi + si
 
-		return *TokenizeInt(ni), nil
+		return *tokenizeInt(ni), nil
 	}
-	return Token{}, errors.New("cannot add non-numeric tokens")
+	return token{}, errors.New("cannot add non-numeric tokens")
 }
 
-func SubTwoTokens(f Token, s Token) (Token, error) {
+func subTwoTokens(f token, s token) (token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
 		si, _ := strconv.Atoi(s.val)
 
 		ni := fi - si
 
-		return *TokenizeInt(ni), nil
+		return *tokenizeInt(ni), nil
 	}
-	return Token{}, errors.New("cannot subtract non-numeric tokens")
+	return token{}, errors.New("cannot subtract non-numeric tokens")
 }
 
-func MultiplyTwoTokens(f Token, s Token) (Token, error) {
+func multiplyTwoTokens(f token, s token) (token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
 		si, _ := strconv.Atoi(s.val)
 
 		ni := fi * si
 
-		return *TokenizeInt(ni), nil
+		return *tokenizeInt(ni), nil
 	}
-	return Token{}, errors.New("cannot multiple non-numeric tokens")
+	return token{}, errors.New("cannot multiple non-numeric tokens")
 }
 
-func DividTwoTokens(f Token, s Token) (Token, error) {
+func dividTwoTokens(f token, s token) (token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
 		si, _ := strconv.Atoi(s.val)
 
 		ni := fi / si
 
-		return *TokenizeInt(ni), nil
+		return *tokenizeInt(ni), nil
 	}
-	return Token{}, errors.New("cannot divid non-numeric tokens")
+	return token{}, errors.New("cannot divid non-numeric tokens")
 }
 
 func isNumeric(s string) bool {
 	_, err := strconv.Atoi(s)
 	return err == nil
+}
+
+func Split(r rune) bool {
+	return r == '+' || r == '-' || r == '*' || r == '/'
+}
+
+func precedence(typ tokenType) int {
+	switch typ {
+	case tokenOperatorAdd:
+		fallthrough
+	case tokenOperatorSub:
+		return 1
+	case tokenOperatorMulti:
+		fallthrough
+	case tokenOperatorDiv:
+		return 2
+	}
+	return 0
 }

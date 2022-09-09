@@ -3,16 +3,16 @@ package evaluator
 import "errors"
 
 type stack struct {
-	tokens []Token
+	tokens []token
 }
 
 func newStack(size int) *stack {
 	return &stack{
-		tokens: make([]Token, 0, size),
+		tokens: make([]token, 0, size),
 	}
 }
 
-func (s *stack) Push(t Token) error {
+func (s *stack) push(t token) error {
 	if s.isFull() {
 		return errors.New("stack is full")
 	}
@@ -20,24 +20,20 @@ func (s *stack) Push(t Token) error {
 	return nil
 }
 
-func (s *stack) Pop() (Token, error) {
+func (s *stack) pop() (token, error) {
 	if s.isEmpty() {
-		return Token{}, errors.New("stack is empty")
+		return token{}, errors.New("stack is empty")
 	}
 	token := s.tokens[len(s.tokens)-1]
 	s.tokens = s.tokens[:len(s.tokens)-1]
 	return token, nil
 }
 
-func (s *stack) Peek() (Token, error) {
+func (s *stack) peek() (token, error) {
 	if s.isEmpty() {
-		return Token{}, errors.New("stack is empty")
+		return token{}, errors.New("stack is empty")
 	}
 	return s.tokens[len(s.tokens)-1], nil
-}
-
-func (s *stack) Size() int {
-	return len(s.tokens)
 }
 
 func (s *stack) isFull() bool {
