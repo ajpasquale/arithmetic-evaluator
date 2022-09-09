@@ -4,7 +4,6 @@ import (
 	"errors"
 )
 
-// converts an infix input queue into a postfix output queue
 func parse(input queue) (queue, error) {
 	l := len(input.tokens)
 	opStack := newStack(l)
