@@ -32,16 +32,17 @@ func tokenizeInt(i int) *token {
 	}
 }
 
-// turns an infix expression like "5+3*1-9" into a queue of tokens
-func tokenizeInfix(s string) (queue, error) {
-	q := newQueue()
-
+func tokenizeInfix(s string) ([]token, error) {
+	if len(s) == 0 {
+		t, err := tokenizeString(s)
+		return []token{t}, err
+	}
 	var substrs []string
 	for {
 		i := strings.IndexFunc(s, func(r rune) bool {
 			return r == '+' || r == '-' || r == '*' || r == '/'
 		})
-		if i == -1 {
+		if i == -1 || len(s) == 1 {
 			if len(s) > 0 {
 				substrs = append(substrs, s)
 			}
@@ -51,10 +52,15 @@ func tokenizeInfix(s string) (queue, error) {
 		s = strings.TrimSpace(s[i+1:])
 	}
 
+	tokens := make([]token, 0)
 	for _, v := range substrs {
-		q.enqueue(v)
+		t, err := tokenizeString(v)
+		if err != nil {
+			return []token{t}, err
+		}
+		tokens = append(tokens, t)
 	}
-	return *q, nil
+	return tokens, nil
 }
 
 func tokenizeString(s string) (token, error) {
@@ -70,7 +76,7 @@ func tokenizeString(s string) (token, error) {
 	case s == "/":
 		return token{tokenOperatorDiv, s}, nil
 	}
-	return token{tokenError, ""}, errors.New("unknown token")
+	return token{tokenError, s}, errors.New("tokenizeString: unknown token")
 }
 
 func addTwoTokens(f token, s token) (token, error) {
@@ -82,7 +88,7 @@ func addTwoTokens(f token, s token) (token, error) {
 
 		return *tokenizeInt(ni), nil
 	}
-	return token{}, errors.New("cannot add non-numeric tokens")
+	return token{}, errors.New("addTwoTokens: cannot add non-numeric tokens")
 }
 
 func subTwoTokens(f token, s token) (token, error) {
@@ -94,7 +100,7 @@ func subTwoTokens(f token, s token) (token, error) {
 
 		return *tokenizeInt(ni), nil
 	}
-	return token{}, errors.New("cannot subtract non-numeric tokens")
+	return token{}, errors.New("subTwoTokens: cannot subtract non-numeric tokens")
 }
 
 func multiplyTwoTokens(f token, s token) (token, error) {
@@ -106,10 +112,10 @@ func multiplyTwoTokens(f token, s token) (token, error) {
 
 		return *tokenizeInt(ni), nil
 	}
-	return token{}, errors.New("cannot multiple non-numeric tokens")
+	return token{}, errors.New("multiplyTwoTokens: cannot multiple non-numeric tokens")
 }
 
-func dividTwoTokens(f token, s token) (token, error) {
+func divideTwoTokens(f token, s token) (token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
 		si, _ := strconv.Atoi(s.val)
@@ -118,7 +124,7 @@ func dividTwoTokens(f token, s token) (token, error) {
 
 		return *tokenizeInt(ni), nil
 	}
-	return token{}, errors.New("cannot divid non-numeric tokens")
+	return token{}, errors.New("divideTwoTokens: cannot divid non-numeric tokens")
 }
 
 func isNumeric(s string) bool {

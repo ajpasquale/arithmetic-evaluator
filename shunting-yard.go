@@ -4,7 +4,13 @@ import (
 	"errors"
 )
 
-func parse(input queue) (queue, error) {
+func parse(infix string) (*queue, error) {
+	ts, err := tokenizeInfix(infix)
+	if err != nil {
+		return nil, err
+	}
+	input := newQueue()
+	input.enqueue(ts...)
 	l := len(input.tokens)
 	opStack := newStack(l)
 	output := newQueue()
@@ -16,7 +22,7 @@ func parse(input queue) (queue, error) {
 		}
 		switch token.typ {
 		case tokenNumeric:
-			output.enqueue(token.val)
+			output.enqueue(token)
 		case tokenOperatorAdd:
 			fallthrough
 		case tokenOperatorSub:
@@ -27,7 +33,7 @@ func parse(input queue) (queue, error) {
 			if !opStack.isEmpty() {
 				top, _ := opStack.peek()
 				for precedence(top.typ) >= precedence(token.typ) {
-					output.enqueue(top.val)
+					output.enqueue(top)
 					opStack.pop()
 					top, _ = opStack.peek()
 				}
@@ -36,12 +42,12 @@ func parse(input queue) (queue, error) {
 				opStack.push(token)
 			}
 		case tokenError:
-			return *output, errors.New("encountered an error token")
+			return output, errors.New("encountered an error token")
 		}
 	}
 	for !opStack.isEmpty() {
 		lastToken, _ := opStack.pop()
-		output.enqueue(lastToken.val)
+		output.enqueue(lastToken)
 	}
-	return *output, nil
+	return output, nil
 }

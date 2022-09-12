@@ -6,26 +6,18 @@ import (
 
 func TestParse(t *testing.T) {
 	tests := []struct {
-		in   []string
+		in   string
 		want string
 	}{
-		{[]string{""}, ""},
-		{[]string{"1"}, "1"},
-		{[]string{"+"}, "+"},
-		{[]string{"1", "+", "1", "+", "1"}, "11+1+"},
-		{[]string{"10", "-", "2", "*", "3", "/", "1"}, "1023*1/-"},
-		{[]string{"5", "+", "3", "*", "1", "-", "9"}, "531*+9-"},
+		{"1", "1"},
+		{"+", "+"},
+		{"1+1+1", "11+1+"},
+		{"10-2*3/1", "1023*1/-"},
+		{"5+3*1-9", "531*+9-"},
 	}
 
 	for _, tt := range tests {
-		input := newQueue()
-		for _, ss := range tt.in {
-			input.enqueue(ss)
-		}
-		output, err := parse(*input)
-		if err != nil {
-			t.Fatal(err)
-		}
+		output, _ := parse(tt.in)
 		if output.String() != tt.want {
 			t.Errorf("evaluator(%q)\nhave %v \nwant %v", tt.in, output.String(), tt.want)
 		}
@@ -34,17 +26,19 @@ func TestParse(t *testing.T) {
 
 func TestParseError(t *testing.T) {
 	tests := []struct {
-		in []string
+		in string
 	}{
-		{[]string{"a"}},
+		{""},
+		{"a"},
+		{"\\"},
+		{"="},
+		{"a+b*c-1"},
+		{"hello world"},
+		{"22-a-32+1"},
 	}
 
 	for _, tt := range tests {
-		input := newQueue()
-		for _, ss := range tt.in {
-			input.enqueue(ss)
-		}
-		output, err := parse(*input)
+		output, err := parse(tt.in)
 		if err == nil {
 			t.Errorf("evaluator(%q)\nhave %v \nwant evaluation error", tt.in, output)
 		}

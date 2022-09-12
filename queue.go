@@ -14,13 +14,8 @@ func newQueue() *queue {
 	}
 }
 
-func (q *queue) enqueue(s string) error {
-	t, err := tokenizeString(s)
-	if err != nil {
-		return err
-	}
-	q.tokens = append(q.tokens, t)
-	return nil
+func (q *queue) enqueue(ts ...token) {
+	q.tokens = append(q.tokens, ts...)
 }
 
 func (q *queue) dequeue() (token, error) {

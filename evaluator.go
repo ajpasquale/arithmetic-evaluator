@@ -5,8 +5,7 @@ import (
 )
 
 func Evaluate(s string) (string, error) {
-	q, _ := tokenizeInfix(s)
-	q, _ = parse(q)
+	q, _ := parse(s)
 	st := newStack(10)
 	for !q.isEmpty() {
 
@@ -35,7 +34,7 @@ func Evaluate(s string) (string, error) {
 		case tokenOperatorDiv:
 			second, _ := st.pop()
 			first, _ := st.pop()
-			eval, _ := dividTwoTokens(first, second)
+			eval, _ := divideTwoTokens(first, second)
 			st.push(eval)
 		}
 	}
