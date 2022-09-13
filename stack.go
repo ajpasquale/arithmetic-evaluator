@@ -12,11 +12,11 @@ func newStack(size int) *stack {
 	}
 }
 
-func (s *stack) push(t token) error {
+func (s *stack) push(ts ...token) error {
 	if s.isFull() {
 		return errors.New("stack is full")
 	}
-	s.tokens = append(s.tokens, t)
+	s.tokens = append(s.tokens, ts...)
 	return nil
 }
 
