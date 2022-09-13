@@ -19,23 +19,23 @@ func Evaluate(s string) (string, error) {
 		case tokenOperatorAdd:
 			second, _ := st.pop()
 			first, _ := st.pop()
-			eval, _ := addTwoTokens(first, second)
-			st.push(eval)
+			eval, _ := computeTwoTokens(first, second, tokenOperatorAdd)
+			st.push(*eval)
 		case tokenOperatorSub:
 			second, _ := st.pop()
 			first, _ := st.pop()
-			eval, _ := subTwoTokens(first, second)
-			st.push(eval)
+			eval, _ := computeTwoTokens(first, second, tokenOperatorSub)
+			st.push(*eval)
 		case tokenOperatorMulti:
 			second, _ := st.pop()
 			first, _ := st.pop()
-			eval, _ := multiplyTwoTokens(first, second)
-			st.push(eval)
+			eval, _ := computeTwoTokens(first, second, tokenOperatorMulti)
+			st.push(*eval)
 		case tokenOperatorDiv:
 			second, _ := st.pop()
 			first, _ := st.pop()
-			eval, _ := divideTwoTokens(first, second)
-			st.push(eval)
+			eval, _ := computeTwoTokens(first, second, tokenOperatorDiv)
+			st.push(*eval)
 		}
 	}
 	sum, _ := st.pop()

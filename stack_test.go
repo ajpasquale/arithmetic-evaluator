@@ -34,12 +34,12 @@ func TestStack(t *testing.T) {
 			}
 
 			if !reflect.DeepEqual(have, tt.want[i]) {
-				t.Errorf("queue(%q)\nhave %v \nwant %v", tt.in, have, tt.want)
+				t.Errorf("stack(%q)\nhave %v \nwant %v", tt.in, have, tt.want)
 			}
 		}
 
 		if !stk.isEmpty() {
-			t.Fatal("queue should be empty")
+			t.Fatal("stack should be empty")
 		}
 	}
 }

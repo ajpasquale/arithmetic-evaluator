@@ -79,54 +79,17 @@ func tokenizeString(s string) (token, error) {
 	return token{tokenError, s}, errors.New("tokenizeString: unknown token")
 }
 
-func addTwoTokens(f token, s token) (token, error) {
+func computeTwoTokens(f token, s token, op tokenType) (*token, error) {
 	if f.typ == tokenNumeric && s.typ == tokenNumeric {
 		fi, _ := strconv.Atoi(f.val)
 		si, _ := strconv.Atoi(s.val)
 
-		ni := fi + si
+		ni := sumTwoValue(fi, si, op)
 
-		return *tokenizeInt(ni), nil
+		return tokenizeInt(ni), nil
 	}
-	return token{}, errors.New("addTwoTokens: cannot add non-numeric tokens")
+	return nil, errors.New("computeTwoTokens: cannot compute non-numeric tokens")
 }
-
-func subTwoTokens(f token, s token) (token, error) {
-	if f.typ == tokenNumeric && s.typ == tokenNumeric {
-		fi, _ := strconv.Atoi(f.val)
-		si, _ := strconv.Atoi(s.val)
-
-		ni := fi - si
-
-		return *tokenizeInt(ni), nil
-	}
-	return token{}, errors.New("subTwoTokens: cannot subtract non-numeric tokens")
-}
-
-func multiplyTwoTokens(f token, s token) (token, error) {
-	if f.typ == tokenNumeric && s.typ == tokenNumeric {
-		fi, _ := strconv.Atoi(f.val)
-		si, _ := strconv.Atoi(s.val)
-
-		ni := fi * si
-
-		return *tokenizeInt(ni), nil
-	}
-	return token{}, errors.New("multiplyTwoTokens: cannot multiple non-numeric tokens")
-}
-
-func divideTwoTokens(f token, s token) (token, error) {
-	if f.typ == tokenNumeric && s.typ == tokenNumeric {
-		fi, _ := strconv.Atoi(f.val)
-		si, _ := strconv.Atoi(s.val)
-
-		ni := fi / si
-
-		return *tokenizeInt(ni), nil
-	}
-	return token{}, errors.New("divideTwoTokens: cannot divid non-numeric tokens")
-}
-
 func isNumeric(s string) bool {
 	_, err := strconv.Atoi(s)
 	return err == nil
@@ -134,6 +97,20 @@ func isNumeric(s string) bool {
 
 func Split(r rune) bool {
 	return r == '+' || r == '-' || r == '*' || r == '/'
+}
+
+func sumTwoValue(f int, s int, op tokenType) int {
+	switch op {
+	case tokenOperatorAdd:
+		return f + s
+	case tokenOperatorSub:
+		return f - s
+	case tokenOperatorMulti:
+		return f * s
+	case tokenOperatorDiv:
+		return f / s
+	}
+	return 0
 }
 
 func precedence(typ tokenType) int {
